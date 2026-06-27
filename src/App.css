@@ -1,0 +1,326 @@
+.app,
+.pantalla {
+  min-height: 100vh;
+  width: 100%;
+  background: #f3f6fb;
+}
+
+.header {
+  width: 100%;
+  background: #1e3a8a;
+  color: white;
+  text-align: center;
+  padding: 22px 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+}
+
+.header p {
+  margin: 8px 0 0;
+  font-size: clamp(14px, 1.6vw, 16px);
+}
+
+.inicio {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f3f6fb;
+}
+
+.inicio-card {
+  width: 100%;
+  max-width: 620px;
+  background: white;
+  border-radius: 18px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+
+.inicio-card h1 {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: clamp(24px, 4vw, 34px);
+}
+
+.inicio-card p {
+  line-height: 1.5;
+  color: #374151;
+}
+
+.inicio-botones {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.contenedor-simple {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.panel {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.panel h2 {
+  color: #1e3a8a;
+  font-size: 18px;
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.panel p {
+  margin: 7px 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.panel hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 18px 0;
+}
+
+.link-volver {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #1e3a8a;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.link-volver:hover {
+  text-decoration: underline;
+}
+
+.estado {
+  margin-top: 12px;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.estado.normal {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.estado.alerta {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.error {
+  margin-top: 12px;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+  border-radius: 10px;
+  padding: 12px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.botones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+}
+
+.btn.principal {
+  background: #2563eb;
+}
+
+.btn.seguro {
+  background: #16a34a;
+}
+
+.btn.detener {
+  background: #dc2626;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.datos {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.texto-explicacion {
+  text-align: justify;
+}
+
+.mapa-card {
+  background: white;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-width: 0;
+}
+
+.mapa {
+  width: 100%;
+  height: calc(100vh - 170px);
+  min-height: 520px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+@media (max-width: 1100px) {
+  .contenedor {
+    grid-template-columns: 350px minmax(0, 1fr);
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .mapa {
+    height: calc(100vh - 165px);
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 850px) {
+  .contenedor {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .mapa {
+    height: 55vh;
+    min-height: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 18px 12px;
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .header p {
+    font-size: 13px;
+  }
+
+  .contenedor,
+  .contenedor-simple {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .panel {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .panel h2 {
+    font-size: 16px;
+  }
+
+  .panel p {
+    font-size: 14px;
+  }
+
+  .estado,
+  .error {
+    font-size: 13px;
+    padding: 12px;
+  }
+
+  .btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .mapa-card {
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .mapa {
+    height: 52vh;
+    min-height: 360px;
+  }
+}
+
+.formulario {
+  display: grid;
+  gap: 12px;
+}
+
+.formulario label {
+  display: grid;
+  gap: 6px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
+
+.formulario input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.formulario input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
