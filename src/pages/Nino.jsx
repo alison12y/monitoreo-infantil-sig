@@ -1,20 +1,22 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 function Nino() {
   const [datosNino, setDatosNino] = useState({
-  nombre: "",
-  edad: "",
-  lugar: "",
-  tutor: "",
-});
+    nombre: "",
+    edad: "",
+    lugar: "",
+    tutor: "",
+  });
 
   const [ubicacion, setUbicacion] = useState(null);
   const [error, setError] = useState("");
   const [watchId, setWatchId] = useState(null);
   const [estado, setEstado] = useState("DETENIDO");
+
+  const intervaloRef = useRef(null);
 
   const cambiarDato = (e) => {
     const { name, value } = e.target;
@@ -37,7 +39,7 @@ function Nino() {
     }
 
     if (!datosNino.lugar.trim()) {
-       setError("Ingrese el lugar de monitoreo.");
+      setError("Ingrese el lugar de monitoreo.");
       return false;
     }
 
@@ -50,17 +52,53 @@ function Nino() {
   };
 
   const enviarUbicacionFirebase = async (nuevaUbicacion) => {
-    await setDoc(doc(db, "monitoreo", "nino-1"), {
-      nombre: datosNino.nombre,
-      edad: datosNino.edad,
-      lugar: datosNino.lugar,
-      tutor: datosNino.tutor,
-      lat: nuevaUbicacion.lat,
-      lng: nuevaUbicacion.lng,
-      precision: nuevaUbicacion.precision,
-      fecha: nuevaUbicacion.fecha,
-      actualizadoEn: Date.now(),
-    });
+    await setDoc(
+      doc(db, "monitoreo", "nino-1"),
+      {
+        nombre: datosNino.nombre,
+        edad: datosNino.edad,
+        lugar: datosNino.lugar,
+        tutor: datosNino.tutor,
+        lat: nuevaUbicacion.lat,
+        lng: nuevaUbicacion.lng,
+        precision: nuevaUbicacion.precision,
+        fecha: nuevaUbicacion.fecha,
+        actualizadoEn: Date.now(),
+      },
+      { merge: true }
+    );
+  };
+
+  const procesarUbicacion = async (posicion) => {
+    const nuevaUbicacion = {
+      lat: posicion.coords.latitude,
+      lng: posicion.coords.longitude,
+      precision: posicion.coords.accuracy,
+      fecha: new Date().toLocaleTimeString(),
+    };
+
+    setUbicacion(nuevaUbicacion);
+    setEstado("ENVIANDO");
+
+    try {
+      await enviarUbicacionFirebase(nuevaUbicacion);
+    } catch {
+      setError("No se pudo enviar la ubicación a Firebase.");
+    }
+  };
+
+  const obtenerUbicacionManual = () => {
+    navigator.geolocation.getCurrentPosition(
+      procesarUbicacion,
+      () => {
+        setError("No se pudo actualizar la ubicación GPS.");
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 10000,
+      }
+    );
   };
 
   const activarUbicacion = () => {
@@ -76,23 +114,7 @@ function Nino() {
     }
 
     const id = navigator.geolocation.watchPosition(
-      async (posicion) => {
-        const nuevaUbicacion = {
-          lat: posicion.coords.latitude,
-          lng: posicion.coords.longitude,
-          precision: posicion.coords.accuracy,
-          fecha: new Date().toLocaleTimeString(),
-        };
-
-        setUbicacion(nuevaUbicacion);
-        setEstado("ENVIANDO");
-
-        try {
-          await enviarUbicacionFirebase(nuevaUbicacion);
-        } catch {
-          setError("No se pudo enviar la ubicación a Firebase.");
-        }
-      },
+      procesarUbicacion,
       () => {
         setError("No se pudo obtener la ubicación. Revisa los permisos GPS.");
       },
@@ -104,21 +126,47 @@ function Nino() {
     );
 
     setWatchId(id);
+
+    if (intervaloRef.current) {
+      clearInterval(intervaloRef.current);
+    }
+
+    intervaloRef.current = setInterval(() => {
+      obtenerUbicacionManual();
+    }, 5000);
   };
 
   const detenerUbicacion = () => {
     if (watchId !== null) {
       navigator.geolocation.clearWatch(watchId);
       setWatchId(null);
-      setEstado("DETENIDO");
     }
+
+    if (intervaloRef.current) {
+      clearInterval(intervaloRef.current);
+      intervaloRef.current = null;
+    }
+
+    setEstado("DETENIDO");
   };
+
+  useEffect(() => {
+    return () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+
+      if (intervaloRef.current) {
+        clearInterval(intervaloRef.current);
+      }
+    };
+  }, [watchId]);
 
   return (
     <div className="pantalla">
       <header className="header">
         <h1>Modo Niño</h1>
-        <p>Este celular envía la ubicación GPS real del niño.</p>
+        <p>Este celular envía la ubicación GPS real del niño en tiempo real.</p>
       </header>
 
       <main className="contenedor-simple">
@@ -181,7 +229,7 @@ function Nino() {
 
           <div className={`estado ${estado === "ENVIANDO" ? "normal" : "alerta"}`}>
             {estado === "ENVIANDO"
-              ? "Ubicación activa: enviando posición real del niño."
+              ? "Ubicación activa: enviando posición real cada 5 segundos."
               : "Ubicación detenida."}
           </div>
 
@@ -223,9 +271,8 @@ function Nino() {
           <hr />
 
           <p className="texto-explicacion">
-            Esta pantalla representa el celular del niño. Los datos ingresados y
-            la ubicación GPS real se envían a Firebase para que el padre o tutor
-            pueda visualizarlos desde otro celular.
+            Mantén esta pantalla abierta en el celular del niño. Mientras esté
+            activa, enviará la ubicación GPS al padre o tutor en tiempo real.
           </p>
         </section>
       </main>

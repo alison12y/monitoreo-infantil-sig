@@ -25,7 +25,10 @@ function CambiarVistaMapa({ ubicacion }) {
 
   useEffect(() => {
     if (ubicacion) {
-      map.setView([ubicacion.lat, ubicacion.lng], 18);
+      map.flyTo([ubicacion.lat, ubicacion.lng], 18, {
+        animate: true,
+        duration: 1,
+      });
     }
   }, [ubicacion, map]);
 
