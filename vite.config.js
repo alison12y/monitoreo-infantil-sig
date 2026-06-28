@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: "auto",
       includeAssets: ["favicon.ico", "icon-192.png", "icon-512.png"],
       manifest: {
         name: "Sistema SIG de Monitoreo Infantil",
@@ -36,6 +37,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+        cleanupOutdatedCaches: true,
+      },
+      devOptions: {
+        enabled: false,
       },
     }),
   ],
